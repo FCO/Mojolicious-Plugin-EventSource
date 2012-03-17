@@ -1,45 +1,56 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
-BEGIN{ plugin 'Mojolicious::Plugin::EventSource' }
+BEGIN{ plugin 'Mojolicious::Plugin::EventSource' => timeout => 1 }
 
 my $foi = {};
 
-get '/vai' => sub{
-   my $self = shift;
-   $foi = {};
-   $self->render( text => 1 ) ;
-};
-
-get '/' => 'index';
-
-event_source '/events' => sub {
+app->routes->event_source('/test1' => sub {
   my $self = shift;
   print $self->tx, $/;
 
-  my $id = Mojo::IOLoop->recurring(1 => sub {
-    my $pips = int(rand 6) + 1;
-    if(not exists $foi->{$self->tx}) {
-       $self->emit("dice", $pips);
-       $foi->{$self->tx}++;
-    }
-  });
-  $self->on(finish => sub { print $/ x 3, "finish!!!", $/ x 3, Mojo::IOLoop->drop($id) });
+  $self->emit("test1", "ok");
+});
+
+event_source('/test2' => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test2", "ok");
+});
+
+event_source '/test3' => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test3", "ok");
 };
 
+event_source '/test4' => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test4", "ok");
+} => undef;
+
+event_source '/test5' => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test5", "ok");
+} => "bla";
+
+event_source '/test6/:ble' => [ble => qr/\d+/] => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test6", "num");
+} => "bla";
+
+event_source '/test6/:ble' => [ble => qr/\w+/] => sub {
+  my $self = shift;
+  print $self->tx, $/;
+
+  $self->emit("test6", "str");
+} => "bla";
+
 app->start;
-__DATA__
-
-@@ index.html.ep
-<!doctype html><html>
-  <head><title>Roll The Dice</title></head>
-  <body>
-    <script>
-      var events = new EventSource('<%= url_for 'events' %>');
-
-      // Subscribe to "dice" event
-      events.addEventListener('dice', function(event) {
-        document.body.innerHTML += event.data + '<br/>';
-      }, false);
-    </script>
-  </body>
-</html>
