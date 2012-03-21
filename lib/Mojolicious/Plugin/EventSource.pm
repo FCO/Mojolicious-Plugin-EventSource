@@ -1,7 +1,7 @@
 package Mojolicious::Plugin::EventSource;
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = 0.2;
+our $VERSION = 0.3;
 
 sub register {
    my $self = shift;
@@ -47,7 +47,7 @@ Mojolicious::Plugin::EventSource - A plugin to make it eazy to use EventSource w
 
 =head1 VERSION
 
-Version 0.2
+Version 0.3
 
 =cut
 
