@@ -16,6 +16,11 @@ WriteMakefile(
         'Test::More'  => 0,
         'Mojolicious' => 2.61,
     },
+    META_MERGE          => {
+        resources => {
+            repository => 'https://github.com/FCO/Mojolicious-Plugin-EventSource',
+        },
+    },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Mojolicious-Plugin-EventSource-*' },
 );
